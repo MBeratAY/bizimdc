@@ -1,0 +1,42 @@
+{
+  "cli": {
+    "version": ">= 12.0.0",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_SUPABASE_URL": "https://mhflxapdfpxisvqpbrrq.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_XSfsXHoFblbAEog4n0SXHw_5HMuodVB",
+        "EXPO_PUBLIC_LIVEKIT_URL": "wss://discord-clone-6g3i6pcr.livekit.cloud"
+      },
+      "channel": "development"
+    },
+    "preview": {
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_SUPABASE_URL": "https://mhflxapdfpxisvqpbrrq.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_XSfsXHoFblbAEog4n0SXHw_5HMuodVB",
+        "EXPO_PUBLIC_LIVEKIT_URL": "wss://discord-clone-6g3i6pcr.livekit.cloud"
+      },
+      "channel": "preview"
+    },
+    "production": {
+      "autoIncrement": true,
+      "env": {
+        "EXPO_PUBLIC_SUPABASE_URL": "https://mhflxapdfpxisvqpbrrq.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_XSfsXHoFblbAEog4n0SXHw_5HMuodVB",
+        "EXPO_PUBLIC_LIVEKIT_URL": "wss://discord-clone-6g3i6pcr.livekit.cloud"
+      },
+      "channel": "production"
+    }
+  }
+}

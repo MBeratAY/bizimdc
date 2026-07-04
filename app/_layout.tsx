@@ -3,6 +3,9 @@ import { Stack, router, useSegments } from 'expo-router';
 import { View, ActivityIndicator } from 'react-native';
 import { supabase } from '../lib/supabase';
 import type { Session } from '@supabase/supabase-js';
+import { registerGlobals } from '@livekit/react-native';
+
+registerGlobals();
 
 export default function RootLayout() {
   const [session, setSession] = useState<Session | null>(null);
@@ -49,6 +52,7 @@ export default function RootLayout() {
       <Stack.Screen name="index" />
       <Stack.Screen name="(auth)" />
       <Stack.Screen name="channel/[id]" />
+      <Stack.Screen name="voice/[id]" />
     </Stack>
   );
 }
