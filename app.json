@@ -73,6 +73,13 @@
         {
           "microphonePermission": "Sesli kanallara katılmak için mikrofona erişim gerekiyor."
         }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/icon.png",
+          "color": "#5865f2"
+        }
       ]
     ],
     "extra": {

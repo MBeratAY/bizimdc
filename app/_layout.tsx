@@ -1,7 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Stack, router, useSegments } from 'expo-router';
 import { View, ActivityIndicator } from 'react-native';
+import * as Notifications from 'expo-notifications';
 import { supabase } from '../lib/supabase';
+import { registerForPushNotifications } from '../lib/notifications';
 import type { Session } from '@supabase/supabase-js';
 import { registerGlobals } from '@livekit/react-native';
 
@@ -11,6 +13,8 @@ export default function RootLayout() {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const segments = useSegments();
+  const notificationListener = useRef<Notifications.EventSubscription | undefined>(undefined);
+  const responseListener = useRef<Notifications.EventSubscription | undefined>(undefined);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -38,6 +42,30 @@ export default function RootLayout() {
       router.replace('/');
     }
   }, [session, loading, segments]);
+
+  // Giriş yapıldığında push token'ı kaydet
+  useEffect(() => {
+    if (session) {
+      registerForPushNotifications();
+    }
+  }, [session]);
+
+  // Bildirime tıklanınca yönlendirme
+  useEffect(() => {
+    responseListener.current = Notifications.addNotificationResponseReceivedListener((response) => {
+      const data = response.notification.request.content.data;
+
+      if (data?.type === 'message' && data?.channelId && data?.channelName) {
+        router.push(`/channel/${data.channelId}?name=${data.channelName}`);
+      } else if (data?.type === 'voice' && data?.channelId && data?.channelName) {
+        router.push(`/voice/${data.channelId}?name=${data.channelName}`);
+      }
+    });
+
+    return () => {
+      responseListener.current?.remove();
+    };
+  }, []);
 
   if (loading) {
     return (
