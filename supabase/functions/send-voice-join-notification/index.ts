@@ -11,34 +11,40 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const payload = await req.json();
-    const record = payload.record;
+    const { channelId, channelName } = await req.json();
+
+    const authHeader = req.headers.get('Authorization')!;
+    const supabaseClient = createClient(
+      Deno.env.get('SUPABASE_URL')!,
+      Deno.env.get('SUPABASE_ANON_KEY')!,
+      { global: { headers: { Authorization: authHeader } } }
+    );
+
+    const { data: userData, error: userError } = await supabaseClient.auth.getUser();
+    if (userError || !userData.user) {
+      return new Response(JSON.stringify({ error: 'Yetkisiz erişim' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
 
     const supabaseAdmin = createClient(
       Deno.env.get('SUPABASE_URL')!,
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     );
 
-    const { data: senderProfile } = await supabaseAdmin
+    const { data: joinerProfile } = await supabaseAdmin
       .from('profiles')
       .select('username')
-      .eq('id', record.user_id)
+      .eq('id', userData.user.id)
       .single();
 
-    const senderName = senderProfile?.username ?? 'Biri';
-
-    const { data: channel } = await supabaseAdmin
-      .from('channels')
-      .select('name')
-      .eq('id', record.channel_id)
-      .single();
-
-    const channelName = channel?.name ?? 'bir kanal';
+    const joinerName = joinerProfile?.username ?? 'Biri';
 
     const { data: profiles } = await supabaseAdmin
       .from('profiles')
       .select('push_token')
-      .neq('id', record.user_id)
+      .neq('id', userData.user.id)
       .not('push_token', 'is', null);
 
     if (!profiles || profiles.length === 0) {
@@ -50,12 +56,12 @@ Deno.serve(async (req) => {
     const messages = profiles.map((p) => ({
       to: p.push_token,
       sound: 'default',
-      title: `#${channelName}`,
-      body: `${senderName}: ${record.content}`,
+      title: '🔊 Sesli Kanal',
+      body: `${joinerName}, #${channelName} sesli kanalına katıldı`,
       data: {
-        type: 'message',
-        channelId: record.channel_id,
-        channelName: channelName,
+        type: 'voice',
+        channelId,
+        channelName,
       },
     }));
 
@@ -70,7 +76,6 @@ Deno.serve(async (req) => {
     });
 
     const pushResult = await pushResponse.json();
-    console.log('Expo Push API cevabı:', JSON.stringify(pushResult));
 
     return new Response(JSON.stringify({ sent: messages.length, pushResult }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },

@@ -124,6 +124,13 @@ export const useVoiceStore = create<VoiceState>((set, get) => ({
       myIdentity: newRoom.localParticipant.identity,
     });
     sync();
+
+    // Diğer kullanıcılara sesli kanala katıldığını bildir
+    supabase.functions.invoke('send-voice-join-notification', {
+      body: { channelId, channelName },
+    }).catch((err) => {
+      console.log('Sesli kanal bildirimi gönderilemedi:', err);
+    });
   },
 
   leaveChannel: async () => {

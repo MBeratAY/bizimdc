@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "628626629207",
+    "project_id": "discord-clone-c3d0f",
+    "storage_bucket": "discord-clone-c3d0f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:628626629207:android:82ca98193743cb811cb912",
+        "android_client_info": {
+          "package_name": "com.beratay.discordclone"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDlUxWRmxnypcMRF8HhrKqM0NTvdU_Fqaw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
